@@ -2,12 +2,10 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import styles from './ContactForm.module.css';
-import { nanoid } from 'nanoid';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact, selectContacts } from '../../redux/contactsSlice';
+import { useDispatch } from 'react-redux';
+import { addContact } from '../../redux/contactsOps';
 
 const ContactForm = () => {
-  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const INITIAL_VALUES = {
@@ -16,18 +14,14 @@ const ContactForm = () => {
   };
 
   const handleSubmit = (values, actions) => {
-    onAddContact(values);
-    actions.resetForm();
-  };
-
-  const onAddContact = newContact => {
-    const finalContact = {
-      ...newContact,
-      id: nanoid(),
+    const newContact = {
+      name: values.name,
+      number: values.number,
     };
 
-    const action = addContact(finalContact);
+    const action = addContact(newContact);
     dispatch(action);
+    actions.resetForm();
   };
   const AddContactSchema = Yup.object({
     name: Yup.string().min(3, 'Too Short!').max(50).required('Required'),
